@@ -54,10 +54,6 @@ $wisata = mysqli_fetch_assoc($result);
 mysqli_stmt_close($stmt);
 
 
-// ========================================
-// JIKA DATA TIDAK DITEMUKAN
-// ========================================
-
 if (!$wisata) {
     die("Data wisata tidak ditemukan.");
 }
@@ -81,126 +77,11 @@ if (!$wisata) {
         <?= htmlspecialchars($wisata['nama']) ?>
     </title>
 
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f7fa;
-            color: #333;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1000px;
-            margin: 40px auto;
-        }
-
-        .back {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #2563eb;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        }
-
-        .hero-image {
-            width: 100%;
-            height: 420px;
-            object-fit: cover;
-            display: block;
-        }
-
-        .no-image {
-            width: 100%;
-            height: 300px;
-            background: #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6b7280;
-        }
-
-        .content {
-            padding: 30px;
-        }
-
-        .kategori {
-            display: inline-block;
-            padding: 6px 12px;
-            background: #dcfce7;
-            color: #15803d;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-        }
-
-        h1 {
-            margin: 15px 0;
-            color: #1f2937;
-        }
-
-        .deskripsi {
-            line-height: 1.8;
-            color: #4b5563;
-        }
-
-        .info {
-            margin-top: 25px;
-            padding: 20px;
-            background: #f9fafb;
-            border-radius: 10px;
-        }
-
-        .info-item {
-            margin-bottom: 15px;
-        }
-
-        .info-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .label {
-            font-weight: bold;
-            color: #374151;
-        }
-
-        .map-button {
-            display: inline-block;
-            margin-top: 25px;
-            padding: 12px 18px;
-            background: #16a34a;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-        }
-
-        .map-button:hover {
-            background: #15803d;
-        }
-
-    </style>
+<link rel="stylesheet" href="style.css">
 
 </head>
-
-
 <body>
-
 <div class="container">
-
-
     <a
         href="index.php?kecamatan=<?= (int) $wisata['kecamatan_id'] ?>"
         class="back"
@@ -208,11 +89,7 @@ if (!$wisata) {
         ← Kembali ke Wisata
         <?= htmlspecialchars($wisata['nama_kecamatan']) ?>
     </a>
-
-
     <div class="card">
-
-
         <?php if (
             !empty($wisata['gambar']) &&
             file_exists("../assets/images/" . $wisata['gambar'])
@@ -231,11 +108,7 @@ if (!$wisata) {
             </div>
 
         <?php endif; ?>
-
-
         <div class="content">
-
-
             <span class="kategori">
                 <?= htmlspecialchars($wisata['kategori']) ?>
             </span>
