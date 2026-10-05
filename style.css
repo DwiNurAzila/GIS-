@@ -1,0 +1,482 @@
+/* ==========================================================================
+   Peta Penduduk Kabupaten Jember — stylesheet UI
+   Cocok dengan: index.php, wisata.js (marker/layer wisata), dan halaman
+   detail wisata (kode tambahan.php). Tidak butuh perubahan backend.
+
+   Arah desain: chrome antarmuka dibuat tenang (hijau-teal tua + abu pasir)
+   supaya warna data di peta (kuning→merah, merah→hijau) jadi yang paling
+   menonjol. Satu elemen "berani": angka besar di kartu statistik.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Public+Sans:wght@400;500;600&display=swap');
+
+:root {
+    --ink:        #16302f;   /* teks utama & latar header */
+    --ink-soft:   #4f6361;   /* teks sekunder */
+    --ink-faint:  #7f908e;   /* keterangan kecil */
+    --teal:       #0e5a5c;   /* warna utama (tombol aktif, judul panel) */
+    --teal-deep:  #0a3f41;
+    --amber:      #e3a82b;   /* aksen: fokus, garis penanda */
+    --paper:      #f2f4f0;   /* latar halaman */
+    --surface:    #ffffff;
+    --line:       #dde3df;
+    --line-soft:  #eef1ee;
+    --up:         #1c7a45;
+    --down:       #b3261e;
+
+    --radius-lg:  14px;      /* panel */
+    --radius-md:  10px;      /* kartu, kontrol peta */
+    --radius-sm:  6px;       /* tombol, badge kecil */
+
+    --shadow-1:   0 1px 2px rgba(22, 48, 47, .06), 0 4px 14px rgba(22, 48, 47, .05);
+    --shadow-map: 0 2px 10px rgba(22, 48, 47, .22);
+
+    --font-head:  'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+    --font-body:  'Public Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* ---------- Dasar ---------- */
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink);
+    background: var(--paper);
+}
+
+a { color: var(--teal); }
+
+:focus-visible {
+    outline: 3px solid var(--amber);
+    outline-offset: 2px;
+}
+
+/* ---------- Header ---------- */
+header {
+    background: var(--ink);
+    color: #fff;
+    padding: 28px max(24px, calc((100% - 1200px) / 2 + 20px)) 26px;
+    border-bottom: 4px solid var(--amber);
+}
+header h1 {
+    margin: 0;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(24px, 3.4vw, 34px);
+    letter-spacing: -.01em;
+    line-height: 1.15;
+}
+header p {
+    margin: 8px 0 0;
+    max-width: 62ch;
+    font-size: 14px;
+    color: #b9cbc8;
+}
+
+/* ---------- Kerangka halaman ---------- */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px 8px;
+}
+
+/* ---------- Kartu statistik (index) ---------- */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+}
+.cards > .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 18px 18px 16px;
+    box-shadow: var(--shadow-1);
+}
+.cards > .card .label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    text-transform: none;
+}
+.cards > .card .value {
+    margin-top: 6px;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(26px, 3vw, 34px);
+    line-height: 1.1;
+    letter-spacing: -.015em;
+    color: var(--teal);
+    font-variant-numeric: tabular-nums;
+}
+.cards > .card .sub {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--ink-faint);
+}
+/* Kartu pertama (Total Penduduk) jadi jangkar visual */
+.cards > .card:first-child {
+    background: var(--teal);
+    border-color: var(--teal-deep);
+    color: #fff;
+}
+.cards > .card:first-child .label { color: #bfe0dd; }
+.cards > .card:first-child .value { color: #fff; }
+.cards > .card:first-child .sub   { color: #a5cfcb; }
+
+/* ---------- Panel ---------- */
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 22px;
+    box-shadow: var(--shadow-1);
+}
+.panel h2 {
+    margin: 0 0 14px;
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 19px;
+    letter-spacing: -.005em;
+    color: var(--ink);
+}
+
+/* ---------- Toolbar ganti tema peta (segmented control) ---------- */
+.toolbar {
+    display: inline-flex;
+    margin-bottom: 14px;
+    padding: 3px;
+    background: var(--line-soft);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+}
+.toolbar button {
+    margin: 0;
+    padding: 8px 16px;
+    font: 500 14px/1 var(--font-body);
+    color: var(--ink-soft);
+    background: transparent;
+    border: 0;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background-color .15s, color .15s;
+}
+.toolbar button:hover { color: var(--ink); }
+.toolbar button.active {
+    background: var(--teal);
+    color: #fff;
+    box-shadow: 0 1px 3px rgba(10, 63, 65, .35);
+}
+
+/* ---------- Peta ---------- */
+#map {
+    height: 600px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: #dfe7e4;
+    z-index: 0;
+}
+
+/* Panel info saat kursor di atas kecamatan (kontrol Leaflet) */
+.leaflet-control.info {
+    min-width: 200px;
+    padding: 10px 14px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: rgba(255, 255, 255, .96);
+    border: 0;
+    border-left: 4px solid var(--amber);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-map);
+}
+.leaflet-control.info h4 {
+    margin: 0 0 4px;
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--teal);
+}
+
+/* Legenda */
+.legend {
+    padding: 10px 14px 8px;
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    line-height: 21px;
+    color: var(--ink);
+    background: rgba(255, 255, 255, .96);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-map);
+}
+.legend b {
+    display: block;
+    margin-bottom: 3px;
+    font-weight: 600;
+}
+.legend i {
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    margin-right: 8px;
+    border-radius: 3px;
+    opacity: 1;
+}
+
+/* Label nama kecamatan di atas peta */
+.label-kec {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    font-family: var(--font-body);
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #1a1a1a;
+    text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 3px #fff, 0 0 5px #fff;
+    pointer-events: none;
+}
+.label-kec::before { display: none; }
+
+/* Kontrol layer (index.php + layer wisata dari wisata.js) */
+.leaflet-control-layers {
+    border: 0;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-map);
+    font-family: var(--font-body);
+}
+.leaflet-control-layers-expanded {
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--ink);
+    background: rgba(255, 255, 255, .96);
+}
+.leaflet-control-layers-expanded label { margin: 3px 0; }
+.leaflet-control-layers-separator { border-top-color: var(--line); margin: 7px -4px; }
+.leaflet-control-layers input { accent-color: var(--teal); }
+
+/* Zoom, skala, atribusi */
+.leaflet-bar {
+    border: 0 !important;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-map) !important;
+    overflow: hidden;
+}
+.leaflet-bar a { color: var(--ink); }
+.leaflet-bar a:hover { background: var(--line-soft); color: var(--teal); }
+.leaflet-control-scale-line {
+    font-family: var(--font-body);
+    color: var(--ink-soft);
+    border-color: var(--ink-soft);
+}
+.leaflet-control-attribution { font-size: 10.5px; }
+
+/* Popup (kecamatan & wisata) */
+.leaflet-popup-content-wrapper {
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-map);
+    color: var(--ink);
+}
+.leaflet-popup-content {
+    margin: 14px 18px;
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+.leaflet-popup-content b { color: var(--teal-deep); }
+.leaflet-popup-content i { color: var(--ink-soft); }
+.leaflet-container a.leaflet-popup-close-button { color: var(--ink-faint); }
+
+/* ---------- Grafik ---------- */
+.grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+.grid2 .panel { margin-bottom: 22px; min-width: 0; } /* min-width cegah canvas meluber */
+.panel canvas { max-width: 100%; }
+
+/* ---------- Tabel ---------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+}
+th, td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--line-soft);
+}
+th {
+    position: sticky;
+    top: 0;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--ink);
+    background: #f6efd9;                 /* sand hangat, turunan dari aksen amber */
+    border-bottom: 2px solid var(--amber);
+}
+tbody tr:nth-child(even) { background: #f9faf8; }
+tbody tr:hover { background: #eef4f2; }
+td.num { text-align: right; }
+.neg { color: var(--down); font-weight: 600; }
+.pos { color: var(--up); font-weight: 500; }
+
+/* ---------- Footer ---------- */
+footer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 18px 20px 32px;
+    text-align: center;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--ink-faint);
+}
+
+/* ---------- Marker wisata (divIcon dari wisata.js) ---------- */
+.leaflet-marker-icon div { transition: transform .12s; }
+.leaflet-marker-icon:hover div { transform: scale(1.25); }
+
+/* ==========================================================================
+   Halaman detail wisata (kode tambahan.php)
+   Selector di-scope (.container > .card, .content ...) agar tidak bentrok
+   dengan .card / .info / .label milik halaman peta.
+   ========================================================================== */
+.container > .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 18px;
+    padding: 8px 14px;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--teal);
+    text-decoration: none;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    transition: background-color .15s;
+}
+.container > .back:hover { background: var(--line-soft); }
+
+.container > .card {
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-1);
+}
+
+.hero-image {
+    display: block;
+    width: 100%;
+    height: clamp(240px, 45vw, 440px);
+    object-fit: cover;
+}
+.no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 260px;
+    font-size: 14px;
+    color: var(--ink-faint);
+    background: repeating-linear-gradient(45deg, #e8edea, #e8edea 12px, #eef2ef 12px, #eef2ef 24px);
+}
+
+.content { padding: clamp(20px, 4vw, 36px); }
+
+.kategori {
+    display: inline-block;
+    padding: 5px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--teal-deep);
+    background: #d9eeea;
+    border-radius: 999px;
+}
+
+.content h1 {
+    margin: 14px 0 12px;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(26px, 4vw, 38px);
+    line-height: 1.15;
+    letter-spacing: -.015em;
+    color: var(--ink);
+}
+
+.deskripsi {
+    max-width: 68ch;
+    line-height: 1.8;
+    color: var(--ink-soft);
+}
+
+.content .info {
+    margin-top: 26px;
+    padding: 6px 20px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--amber);
+    border-radius: var(--radius-md);
+}
+.info-item {
+    margin: 0;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+}
+.info-item:last-child { border-bottom: 0; }
+.info-item .label {
+    margin-bottom: 2px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+}
+
+.map-button {
+    display: inline-block;
+    margin-top: 26px;
+    padding: 13px 20px;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+    background: var(--teal);
+    border-radius: var(--radius-sm);
+    transition: background-color .15s;
+}
+.map-button:hover { background: var(--teal-deep); }
+
+/* ==========================================================================
+   Responsif
+   ========================================================================== */
+@media (max-width: 800px) {
+    .grid2 { grid-template-columns: 1fr; gap: 0; }
+    #map { height: 480px; }
+    .container { padding: 16px 14px 4px; }
+    .panel { padding: 16px; }
+}
+
+@media (max-width: 560px) {
+    #map { height: 420px; }
+    .toolbar { display: flex; }
+    .toolbar button { flex: 1; padding: 10px 8px; }
+
+    /* kontrol layer jangan menutupi peta di layar sempit */
+    .leaflet-control-layers-expanded { font-size: 12px; padding: 8px 10px; }
+    .leaflet-control.info { min-width: 0; }
+
+    /* tabel bisa digeser horizontal tanpa mengubah HTML */
+    table { display: block; overflow-x: auto; white-space: nowrap; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+}
