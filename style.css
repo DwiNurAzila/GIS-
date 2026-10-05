@@ -1,13 +1,3 @@
-/* ==========================================================================
-   Peta Penduduk Kabupaten Jember — stylesheet UI
-   Cocok dengan: index.php, wisata.js (marker/layer wisata), dan halaman
-   detail wisata (kode tambahan.php). Tidak butuh perubahan backend.
-
-   Arah desain: chrome antarmuka dibuat tenang (hijau-teal tua + abu pasir)
-   supaya warna data di peta (kuning→merah, merah→hijau) jadi yang paling
-   menonjol. Satu elemen "berani": angka besar di kartu statistik.
-   ========================================================================== */
-
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Public+Sans:wght@400;500;600&display=swap');
 
 :root {
@@ -321,7 +311,7 @@ th {
     font-weight: 600;
     font-size: 13px;
     color: var(--ink);
-    background: #f6efd9;                 /* sand hangat, turunan dari aksen amber */
+    background: #f6efd9;                 
     border-bottom: 2px solid var(--amber);
 }
 tbody tr:nth-child(even) { background: #f9faf8; }
